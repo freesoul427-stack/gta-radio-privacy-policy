@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>GTA Radio</title>
+    <meta
+      name="description"
+      content="GTA Radio is a stylized mobile radio app with themed stations, background playback, and a curated streaming experience."
+    />
+    <style>
+      :root {
+        --turquoise: #1dcec9;
+        --turquoise-light: #6ff0e7;
+        --ink: #151312;
+        --gold: #d5a72b;
+        --gold-light: #f3da84;
+        --panel: rgba(10, 22, 27, 0.72);
+        --card: rgba(255, 255, 255, 0.9);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        font-family: Georgia, "Times New Roman", serif;
+        color: #f7f6f2;
+        background:
+          radial-gradient(circle at top left, rgba(111, 240, 231, 0.26), transparent 32%),
+          radial-gradient(circle at bottom right, rgba(213, 167, 43, 0.18), transparent 28%),
+          linear-gradient(180deg, #071419 0%, #0d1d23 48%, #101214 100%);
+      }
+
+      a {
+        color: inherit;
+      }
+
+      .shell {
+        width: min(1120px, calc(100% - 32px));
+        margin: 0 auto;
+      }
+
+      .topbar {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        backdrop-filter: blur(14px);
+        background: rgba(7, 20, 25, 0.72);
+        border-bottom: 1px solid rgba(111, 240, 231, 0.16);
+      }
+
+      .topbar-inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        padding: 16px 0;
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        text-decoration: none;
+      }
+
+      .brand-mark {
+        width: 42px;
+        height: 42px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, var(--turquoise), #0f9fa5);
+        display: grid;
+        place-items: center;
+        font-weight: bold;
+        color: #052228;
+        box-shadow: 0 10px 22px rgba(0, 0, 0, 0.28);
+      }
+
+      .brand-text {
+        font-size: 1.1rem;
+        letter-spacing: 0.04em;
+        color: var(--gold-light);
+      }
+
+      .nav {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 14px;
+      }
+
+      .nav a {
+        text-decoration: none;
+        color: #dff9f7;
+        font-size: 0.96rem;
+      }
+
+      .hero {
+        padding: 84px 0 56px;
+      }
+
+      .hero-panel {
+        position: relative;
+        overflow: hidden;
+        background:
+          linear-gradient(135deg, rgba(18, 73, 79, 0.92), rgba(6, 20, 24, 0.92)),
+          linear-gradient(120deg, rgba(111, 240, 231, 0.16), transparent 42%);
+        border: 1px solid rgba(111, 240, 231, 0.18);
+        border-radius: 30px;
+        padding: 36px 30px;
+        box-shadow: 0 28px 70px rgba(0, 0, 0, 0.3);
+      }
+
+      .hero-panel::after {
+        content: "";
+        position: absolute;
+        inset: auto -80px -120px auto;
+        width: 280px;
+        height: 280px;
+        background: radial-gradient(circle, rgba(111, 240, 231, 0.22), transparent 65%);
+        pointer-events: none;
+      }
+
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 14px;
+        border-radius: 999px;
+        background: rgba(111, 240, 231, 0.12);
+        color: #c9fffb;
+        font-size: 0.9rem;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+      }
+
+      h1 {
+        margin: 18px 0 14px;
+        font-size: clamp(2.6rem, 6vw, 5.1rem);
+        line-height: 0.98;
+        color: var(--gold-light);
+        text-shadow: 0 3px 0 rgba(63, 31, 0, 0.4);
+      }
+
+      .hero-copy {
+        max-width: 720px;
+        font-size: 1.08rem;
+        color: #e6f7f6;
+        line-height: 1.7;
+      }
+
+      .hero-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 14px;
+        margin-top: 28px;
+      }
+
+      .button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 180px;
+        padding: 14px 18px;
+        border-radius: 14px;
+        text-decoration: none;
+        font-weight: bold;
+        transition: transform 0.18s ease;
+      }
+
+      .button:hover {
+        transform: translateY(-2px);
+      }
+
+      .button-primary {
+        background: linear-gradient(135deg, var(--gold), #f0c85a);
+        color: #352300;
+        box-shadow: 0 18px 30px rgba(79, 51, 0, 0.25);
+      }
+
+      .button-secondary {
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        color: #eaffff;
+      }
+
+      .section {
+        padding: 18px 0 56px;
+      }
+
+      .section h2 {
+        margin: 0 0 18px;
+        font-size: clamp(1.8rem, 3.4vw, 2.7rem);
+        color: var(--gold-light);
+      }
+
+      .section-intro {
+        margin: 0 0 26px;
+        max-width: 760px;
+        color: #d6eceb;
+        line-height: 1.7;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 18px;
+      }
+
+      .card {
+        background: var(--card);
+        color: var(--ink);
+        border-radius: 24px;
+        padding: 24px 22px;
+        box-shadow: 0 18px 46px rgba(0, 0, 0, 0.18);
+      }
+
+      .card h3 {
+        margin: 0 0 10px;
+        color: #0d6e73;
+        font-size: 1.22rem;
+      }
+
+      .card p {
+        margin: 0;
+        line-height: 1.7;
+      }
+
+      .list-card {
+        background: linear-gradient(180deg, rgba(255,255,255,0.94), rgba(243, 250, 250, 0.92));
+      }
+
+      .list-card ul {
+        margin: 0;
+        padding-left: 18px;
+        color: #1d2a2d;
+        line-height: 1.8;
+      }
+
+      .footer {
+        padding: 20px 0 48px;
+        color: #b8d6d5;
+      }
+
+      .footer-panel {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(111, 240, 231, 0.16);
+        border-radius: 24px;
+        padding: 24px 22px;
+      }
+
+      .footer-links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 14px;
+        margin-top: 10px;
+      }
+
+      .footer-links a {
+        color: var(--turquoise-light);
+        text-decoration: none;
+      }
+
+      @media (max-width: 900px) {
+        .grid {
+          grid-template-columns: 1fr;
+        }
+
+        .topbar-inner {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="shell topbar-inner">
+        <a class="brand" href="#top">
+          <div class="brand-mark">GR</div>
+          <div class="brand-text">GTA Radio</div>
+        </a>
+        <nav class="nav">
+          <a href="#about">About</a>
+          <a href="#features">Features</a>
+          <a href="#support">Support</a>
+          <a href="privacy.html">Privacy Policy</a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="top">
+      <section class="hero">
+        <div class="shell">
+          <div class="hero-panel">
+            <div class="eyebrow">Streaming radio app</div>
+            <h1>Styled stations, background playback, and a mobile-first radio experience.</h1>
+            <p class="hero-copy">
+              GTA Radio is a themed streaming radio app built for fans of station surfing, strong
+              visual identity, and simple playback on mobile. The app features curated station
+              lineups, artwork-rich browsing, and a polished listening experience that keeps moving
+              when the app goes into the background.
+            </p>
+            <div class="hero-actions">
+              <a class="button button-primary" href="#features">Explore Features</a>
+              <a class="button button-secondary" href="privacy.html">Read Privacy Policy</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="about">
+        <div class="shell">
+          <h2>About The App</h2>
+          <p class="section-intro">
+            This site is the public home for GTA Radio. It provides a simple overview of the app,
+            a support contact point, and access to the current privacy policy for users,
+            collaborators, and distribution partners.
+          </p>
+          <div class="grid">
+            <article class="card">
+              <h3>Station-driven design</h3>
+              <p>
+                Each station uses its own visual personality rather than a one-size-fits-all shell,
+                helping the app feel closer to channel surfing than generic streaming.
+              </p>
+            </article>
+            <article class="card">
+              <h3>Background listening</h3>
+              <p>
+                The listening experience is designed to continue when the app is not in the
+                foreground, keeping the radio feel intact while users move through the rest of their day.
+              </p>
+            </article>
+            <article class="card">
+              <h3>Admin-managed content</h3>
+              <p>
+                Tracks, artwork, and menu ordering are managed through a separate admin workflow so
+                the public app can stay clean, lightweight, and focused on listening.
+              </p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="features">
+        <div class="shell">
+          <h2>Core Features</h2>
+          <p class="section-intro">
+            The app is currently centered around streaming radio-style playback, themed station
+            pages, and a hosted content system that allows the experience to evolve over time.
+          </p>
+          <div class="grid">
+            <article class="card list-card">
+              <h3>What Users Get</h3>
+              <ul>
+                <li>Multiple themed radio stations</li>
+                <li>Artwork-rich track browsing</li>
+                <li>Background playback on mobile</li>
+                <li>Quick station switching</li>
+                <li>Simple, focused playback controls</li>
+              </ul>
+            </article>
+            <article class="card list-card">
+              <h3>What Powers It</h3>
+              <ul>
+                <li>Hosted streaming backend</li>
+                <li>Admin-side content management</li>
+                <li>Live track, artwork, and menu updates</li>
+                <li>Expandable station structure</li>
+                <li>Mobile-ready deployment workflow</li>
+              </ul>
+            </article>
+            <article class="card list-card">
+              <h3>What This Site Covers</h3>
+              <ul>
+                <li>Public app overview</li>
+                <li>Support contact</li>
+                <li>Privacy policy access</li>
+                <li>Distribution-facing web presence</li>
+                <li>Basic project credibility for partners</li>
+              </ul>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="support">
+        <div class="shell">
+          <h2>Support</h2>
+          <p class="section-intro">
+            If you have questions about the app, distribution, or privacy practices, use the
+            contact information below.
+          </p>
+          <div class="grid">
+            <article class="card">
+              <h3>Contact</h3>
+              <p>
+                Support email:<br />
+                <strong>[Freesoul427@gmail.com]</strong>
+              </p>
+            </article>
+            <article class="card">
+              <h3>Privacy</h3>
+              <p>
+                Review the app’s current privacy policy here:<br />
+                <a href="privacy.html"><strong>Open Privacy Policy</strong></a>
+              </p>
+            </article>
+            <article class="card">
+              <h3>Distribution Status</h3>
+              <p>
+                The app is currently being prepared for broader Android distribution. This site can
+                be updated later with download instructions, release notes, and support FAQs.
+              </p>
+            </article>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="shell">
+        <div class="footer-panel">
+          <div>GTA Radio</div>
+          <div class="footer-links">
+            <a href="#about">About</a>
+            <a href="#features">Features</a>
+            <a href="#support">Support</a>
+            <a href="privacy.html">Privacy Policy</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
